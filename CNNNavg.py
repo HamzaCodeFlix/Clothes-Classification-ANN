@@ -19,7 +19,7 @@ print("Shape of y:", y.shape)
 X = X / 255.0 
 print("Minimum value:", X.min()) 
 print("Maximum value:", X.max()) 
- 
+
 # reshape images 
  
 X = X.reshape(-1, 28, 28, 3) 
