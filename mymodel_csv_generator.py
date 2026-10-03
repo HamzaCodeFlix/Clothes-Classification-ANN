@@ -8,6 +8,7 @@ dataset_path = r"C:\Users\Muhammad Hamza\ANNDL_Fall_2026\ANN-Clothes-Project\Clo
 
 with open("Images28.csv", "w", newline="") as file:
     writer = csv.writer(file)
+    writer.writerow(["Label"] + [f"Pixel_{i}" for i in range(28 * 28)])
 
     for i in labels:
         path = os.path.join(dataset_path, i)
