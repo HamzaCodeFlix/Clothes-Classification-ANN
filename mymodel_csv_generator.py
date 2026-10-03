@@ -29,3 +29,5 @@ with open("Images28.csv", "w", newline="") as file:
                     writer.writerow(record)
 
 print("Images28.csv created successfully!")
+
+
