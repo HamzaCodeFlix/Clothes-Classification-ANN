@@ -32,3 +32,4 @@ with open("Images28.csv", "w", newline="") as file:
 print("Images28.csv created successfully!")
 
 
+

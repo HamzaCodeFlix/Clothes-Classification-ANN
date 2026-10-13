@@ -1,4 +1,6 @@
 from keras.utils import to_categorical
+import numpy as np
+from keras.utils import load_img, img_to_array
 from keras.models import Sequential
 from keras.layers import Dense, Activation
 import matplotlib.pyplot as plt
@@ -54,3 +56,27 @@ plt.show()
     
 model.save("ANN.keras")
 print("ANN model saved successfully!")
+
+
+
+
+import numpy as np
+
+img = load_img(r"C:\Users\Muhammad Hamza\Pictures\shirts.jpg", target_size=(28, 28))
+img = img_to_array(img)
+
+img = np.array(img)
+img = img / 255.0
+img = img.reshape(1, 2352)
+
+prediction = model.predict(img)
+
+print("Prediction:", np.argmax(prediction))
+print("Confidence:", np.max(prediction) * 100, "%")
+
+plt.imshow(img.reshape(28, 28, 3))
+plt.show()
+
+
+
+

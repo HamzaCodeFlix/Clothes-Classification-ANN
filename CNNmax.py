@@ -1,12 +1,13 @@
 from keras.models import Sequential 
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Activation 
-from keras.utils import to_categorical 
+from keras.utils import img_to_array, load_img, to_categorical 
+from PIL import Image
 import pandas as pd 
 import numpy as np 
 from sklearn.model_selection import train_test_split 
 import matplotlib.pyplot as plt 
  
- 
+  
 data = pd.read_csv("Images28.csv", header=None) 
 print("Shape of data:", data.shape) 
 X = data.iloc[:, 1:].values 
@@ -73,3 +74,20 @@ plt.show()
  
 model.save("CNNmax.keras") 
 print("CNN Max Pooling model saved successfully!")
+
+
+
+img = load_img(r"C:\Users\Muhammad Hamza\Pictures\jeans.jpg", target_size=(28, 28))
+img = img_to_array(img)
+img = np.array(img)
+img = img / 255.0
+img = img.reshape(1, 2352)
+
+prediction = model.predict(img)
+
+print("Prediction:", np.argmax(prediction))
+print("Confidence:", np.max(prediction) * 100, "%")
+
+plt.imshow(img.reshape(28, 28, 3))
+plt.show()
+
