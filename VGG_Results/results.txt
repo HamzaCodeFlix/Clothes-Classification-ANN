@@ -1,0 +1,19 @@
+VGG MODEL FINAL RESULTS
+=======================
+
+Images per category: 100
+Total images: 400
+Training images: 320
+Testing images: 80
+Epochs: 50
+
+Training accuracy: 0.2500
+Training accuracy percentage: 25.00%
+Training loss: 1.3864
+
+Testing accuracy: 0.2500
+Testing accuracy percentage: 25.00%
+Testing loss: 1.3864
+
+Correct predictions: 20
+Incorrect predictions: 60

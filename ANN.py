@@ -60,6 +60,11 @@ print("ANN model saved successfully!")
 
 
 
+
+
+
+
+
 import numpy as np
 
 img = load_img(r"C:\Users\Muhammad Hamza\Pictures\shirts.jpg", target_size=(28, 28))

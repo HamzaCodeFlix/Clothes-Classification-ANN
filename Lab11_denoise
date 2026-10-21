@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras import Model, losses
+from keras.layers import Input, Dense, Flatten, Reshape
+from sklearn.model_selection import train_test_split
+from random import randint
+
+data = pd.read_csv("Images110.csv")
+x = data.iloc[:, 1:].values.astype("float32") / 255.0
+x = x.reshape(-1, 110, 110, 3)
+
+x_train, x_test = train_test_split(x, test_size=0.2, random_state=42)
+
+noise_factor = 0.4
+x_train_noisy = np.clip(x_train + noise_factor * np.random.normal(0, 1, x_train.shape), 0, 1)
+x_test_noisy = np.clip(x_test + noise_factor * np.random.normal(0, 1, x_test.shape), 0, 1)
+
+print("Shape of x_train:", x_train.shape)
+print("Shape of x_test:", x_test.shape)
+
+input_layer = Input(shape=(110, 110, 3))
+flattened = Flatten()(input_layer)
+hidden = Dense(100, activation="relu")(flattened)
+latent = Dense(20, activation="relu")(hidden)
+encoder = Model(input_layer, latent, name="encoder")
+
+input_layer_decoder = Input(shape=(20,))
+upsampled = Dense(100, activation="relu")(input_layer_decoder)
+unsampled = Dense(110 * 110 * 3, activation="sigmoid")(upsampled)
+constructed = Reshape((110, 110, 3))(unsampled)
+decoder = Model(input_layer_decoder, constructed, name="decoder")
+
+autoencoder = Model(input_layer, decoder(encoder(input_layer)), name="autoencoder")
+autoencoder.compile(optimizer="adam", loss=losses.MeanSquaredError(), metrics=["accuracy"])
+
+summary = autoencoder.fit(x_train_noisy, x_train, epochs=10, batch_size=32, validation_data=(x_test_noisy, x_test))
+
+print("Training Loss:", summary.history["loss"][-1])
+print("Training Accuracy:", summary.history["accuracy"][-1] * 100, "%")
+print("Testing Loss:", summary.history["val_loss"][-1])
+print("Testing Accuracy:", summary.history["val_accuracy"][-1] * 100, "%")
+
+plt.plot(summary.history["loss"], label="Training Loss")
+plt.plot(summary.history["val_loss"], label="Testing Loss")
+plt.legend()
+plt.show()
+
+plt.plot(summary.history["accuracy"], label="Training Accuracy")
+plt.plot(summary.history["val_accuracy"], label="Testing Accuracy")
+plt.legend()
+plt.show()
+
+fig, axs = plt.subplots(3, 3, figsize=(10, 10))
+
+for i in range(3):
+    idx = randint(0, len(x_test) - 1)
+    original = x_test[idx]
+    noisy = x_test_noisy[idx]
+    reconstructed = autoencoder.predict(np.expand_dims(noisy, axis=0), verbose=0)[0]
+    axs[i][0].imshow(original)
+    axs[i][0].set_title("Original")
+    axs[i][1].imshow(noisy)
+    axs[i][1].set_title("Noisy")
+    axs[i][2].imshow(reconstructed)
+    axs[i][2].set_title("Reconstructed")
+    for j in range(3):
+        axs[i][j].axis("off")
+
+plt.tight_layout()
+plt.show()

@@ -76,7 +76,7 @@ model.compile(
 history = model.fit(
     trainX,
     trainY,
-    epochs=5,
+    epochs=100,
     batch_size=20,
     verbose=1
 )
@@ -129,7 +129,7 @@ plt.plot(history.history['accuracy'], label='Training Accuracy')
 
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
-plt.title("VGG Model Accuracy - 5 Epochs")
+plt.title("VGG Model Accuracy - 50- Epochs")
 plt.legend()
 plt.grid()
 plt.show()
@@ -140,22 +140,57 @@ plt.plot(history.history['loss'], label='Training Loss')
 
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
-plt.title("VGG Model Loss - 5 Epochs")
+plt.title("VGG Model Loss - 50 Epochs")
 plt.legend()
 plt.grid()
 plt.show()
 
-img = load_img(r"C:\Users\Muhammad Hamza\Pictures\shirts.jpg", target_size=(28, 28))
-img = img_to_array(img)
 
-img = np.array(img)
-img = img / 255.0
-img = img.reshape(1, 2352)
 
-prediction = model.predict(img)
 
-print("Prediction:", np.argmax(prediction))
-print("Confidence:", np.max(prediction) * 100, "%")
 
-plt.imshow(img.reshape(28, 28, 3))
-plt.show()
+
+
+import os
+import tensorflow as tf
+import numpy as np
+import cv2
+
+folder = r"C:\Users\Muhammad Hamza\ANNDL_Fall_2026\ANN-Clothes-Project"
+
+model = tf.keras.models.load_model(
+    os.path.join(folder, "VGG.keras")
+)
+
+image_path = os.path.join(folder, "shirt.jpg")
+
+img = cv2.imread(image_path)
+
+if img is None:
+    print("Image not found:", image_path)
+
+else:
+    img = cv2.resize(img, (224, 224))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.astype("float32") / 255.0
+    test_img = np.expand_dims(img, axis=0)
+
+    prediction = model.predict(test_img, verbose=0)
+
+    labels = {
+        0: "Coat",
+        1: "Jeans",
+        2: "Shirt",
+        3: "Sweater"
+    }
+
+    index = np.argmax(prediction[0])
+
+    print("Predicted category:", labels[index])
+    print(f"Confidence: {prediction[0][index] * 100:.2f}%")
+
+
+
+
+
+
